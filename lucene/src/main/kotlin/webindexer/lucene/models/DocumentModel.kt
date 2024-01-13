@@ -1,6 +1,6 @@
-package com.webindexer.lucene.models
+package webindexer.lucene.models
 
-import com.webindexer.lucene.constants.Fields
+import webindexer.lucene.constants.Fields
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
 import org.apache.lucene.document.StringField

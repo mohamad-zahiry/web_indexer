@@ -1,4 +1,4 @@
-package com.webindexer.lucene.constants
+package webindexer.lucene.constants
 
 object Fields {
     const val URL: String = "url"

@@ -1,4 +1,4 @@
-package com.webindexer.lucene.constants
+package webindexer.lucene.constants
 
 object Settings {
     const val INDEX_DIR_PATH: String = ""
