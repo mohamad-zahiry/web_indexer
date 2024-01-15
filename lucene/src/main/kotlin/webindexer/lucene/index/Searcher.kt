@@ -3,27 +3,32 @@ package webindexer.lucene.index
 import webindexer.lucene.constants.indexDirectory
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.DirectoryReader
-import org.apache.lucene.index.Term
 import org.apache.lucene.search.*
+import org.apache.lucene.search.PhraseQuery
+import webindexer.lucene.constants.Fields
 import webindexer.lucene.constants.Settings
 import java.io.Closeable
+import java.util.*
 
 class Searcher : Closeable {
     private val reader: DirectoryReader = DirectoryReader.open(indexDirectory)
-    private val searcher: IndexSearcher = IndexSearcher(reader)
+    private val searcher: IndexSearcher = IndexSearcher(reader.context)
 
     fun search(term: String): List<Document> {
-        val topDocs: TopDocs = searcher.search(FuzzyQuery(Term(term)), Settings.MAX_SEARCH_RESULT)
-        val scoreDocs: Array<ScoreDoc> = topDocs.scoreDocs
-        val hits: TotalHits? = topDocs.totalHits
+        val normalizedTerm: Array<String> = term
+            .lowercase(Locale.getDefault())
+            .split(" ")
+            .toTypedArray()
+
+        val topDocs: TopDocs = searcher.search(
+            PhraseQuery(Fields.TITLE, *normalizedTerm),
+            Settings.MAX_SEARCH_RESULT,
+        )
 
         val foundDocs = mutableListOf<Document>()
-
-        for (sc in scoreDocs) {
-            val docID: Int = sc.doc
-
-            @Suppress("DEPRECATION") foundDocs.add(searcher.doc(docID))
-        }
+        for (sc in topDocs.scoreDocs)
+            @Suppress("DEPRECATION")
+            foundDocs.add(searcher.doc(sc.doc))
 
         return foundDocs
     }
