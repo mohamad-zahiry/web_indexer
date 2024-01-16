@@ -11,8 +11,13 @@ repositories {
 
 dependencies {
     // Local modules
-    implementation(project(":crawler"))
-    implementation(project(":lucene"))
+    implementation(project("crawler")) {
+        implementation("it.skrape:skrapeit:1.1.5")
+    }
+    implementation(project("lucene")) {
+        implementation("org.apache.lucene:lucene-core:9.9.1")
+        implementation("org.apache.lucene:lucene-queryparser:9.9.1")
+    }
     // Third party modules
     implementation(platform("org.http4k:http4k-bom:5.12.2.1"))
     implementation("org.http4k:http4k-core")
