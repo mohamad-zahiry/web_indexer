@@ -1,12 +1,13 @@
 package webindexer.lucene.index
 
-import webindexer.lucene.constants.indexDirectory
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.DirectoryReader
-import org.apache.lucene.search.*
+import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.PhraseQuery
+import org.apache.lucene.search.TopDocs
 import webindexer.lucene.constants.Fields
 import webindexer.lucene.constants.Settings
+import webindexer.lucene.constants.indexDirectory
 import java.io.Closeable
 import java.util.*
 

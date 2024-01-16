@@ -1,10 +1,10 @@
 package webindexer.lucene.models
 
-import webindexer.lucene.constants.Fields
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
 import org.apache.lucene.document.StringField
 import org.apache.lucene.document.TextField
+import webindexer.lucene.constants.Fields
 
 data class DocumentModel(
     val url: String,
