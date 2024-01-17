@@ -3,6 +3,7 @@ package webindexer.lucene.index
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser
+import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.TopDocs
 import webindexer.lucene.constants.Fields
@@ -18,6 +19,20 @@ class Searcher : Closeable {
 
     fun search(term: String) {
         val query = MultiFieldQueryParser(Fields.allFields(), analyzer)
+            .parse(term)
+
+        val topDocs: TopDocs = searcher.search(
+            query,
+            Settings.MAX_SEARCH_RESULT,
+        )
+
+        for (sc in topDocs.scoreDocs)
+            @Suppress("DEPRECATION")
+            _foundDocs.add(searcher.doc(sc.doc))
+    }
+
+    fun search(term: String, fields: Array<String>) {
+        val query = MultiFieldQueryParser(fields, analyzer)
             .parse(term)
 
         val topDocs: TopDocs = searcher.search(

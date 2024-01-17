@@ -1,20 +1,25 @@
 package webindexer.api
 
-import org.apache.lucene.document.Document
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.format.Jackson.asJsonObject
-import webindexer.lucene.constants.Fields
 
 object Views {
     fun search(req: Request): Response {
         val term: String = req.bodyString().asJsonObject()["term"].asText()
-        val foundDocs: List<Document> = Helpers.search(term)
+        var fields: Array<String>? = req.bodyString()
+            .asJsonObject()["fields"]
+            ?.asIterable()
+            ?.map { it.asText() }
+            ?.filter { it.isNotEmpty() }
+            ?.toTypedArray()
 
-        val response: Map<String, Any> = mapOf(
-            "count" to foundDocs.size,
-            "links" to foundDocs.map { it.getField(Fields.URL) }.toTypedArray(),
+        if (fields.isNullOrEmpty())
+            fields = null
+
+        val response: Map<String, List<String>> = mapOf(
+            "links" to Helpers.search(term, fields),
         )
 
         return Response(Status.OK).body(response.asJsonObject().toString())

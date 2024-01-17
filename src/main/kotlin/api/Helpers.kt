@@ -3,6 +3,7 @@ package webindexer.api
 import org.apache.lucene.document.Document
 import webindexer.crawler.CrawlOutput
 import webindexer.crawler.Crawler
+import webindexer.lucene.constants.Fields
 import webindexer.lucene.index.Searcher
 import webindexer.lucene.index.Writer
 import webindexer.lucene.models.DocumentModel
@@ -38,9 +39,14 @@ object Helpers {
         writer.close() // It's better to close `writer` explicitly
     }
 
-    fun search(term: String = ""): List<Document> {
+    fun search(term: String, fields: Array<String>?): List<String> {
         val searcher: Searcher = Searcher()
-        searcher.search(term)
-        return searcher.foundDocs()
+
+        when (fields) {
+            null -> searcher.search(term) // `full-text` search
+            else -> searcher.search(term, fields)
+        }
+
+        return searcher.foundDocs().map { it.getField(Fields.URL).stringValue() }
     }
 }
