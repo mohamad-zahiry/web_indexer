@@ -2,14 +2,14 @@ package webindexer.lucene.index
 
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.DirectoryReader
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser
 import org.apache.lucene.search.IndexSearcher
-import org.apache.lucene.search.PhraseQuery
 import org.apache.lucene.search.TopDocs
 import webindexer.lucene.constants.Fields
 import webindexer.lucene.constants.Settings
+import webindexer.lucene.constants.analyzer
 import webindexer.lucene.constants.indexDirectory
 import java.io.Closeable
-import java.util.*
 
 class Searcher : Closeable {
     private val reader: DirectoryReader = DirectoryReader.open(indexDirectory)
@@ -17,13 +17,11 @@ class Searcher : Closeable {
     private var _foundDocs: MutableList<Document> = mutableListOf()
 
     fun search(term: String) {
-        val normalizedTerm: Array<String> = term
-            .lowercase(Locale.getDefault())
-            .split(" ")
-            .toTypedArray()
+        val query = MultiFieldQueryParser(Fields.allFields(), analyzer)
+            .parse(term)
 
         val topDocs: TopDocs = searcher.search(
-            PhraseQuery(Fields.TITLE, *normalizedTerm),
+            query,
             Settings.MAX_SEARCH_RESULT,
         )
 
