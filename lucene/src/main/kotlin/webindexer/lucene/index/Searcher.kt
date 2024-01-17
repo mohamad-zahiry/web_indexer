@@ -14,8 +14,9 @@ import java.util.*
 class Searcher : Closeable {
     private val reader: DirectoryReader = DirectoryReader.open(indexDirectory)
     private val searcher: IndexSearcher = IndexSearcher(reader.context)
+    private var _foundDocs: MutableList<Document> = mutableListOf()
 
-    fun search(term: String): List<Document> {
+    fun search(term: String) {
         val normalizedTerm: Array<String> = term
             .lowercase(Locale.getDefault())
             .split(" ")
@@ -26,13 +27,12 @@ class Searcher : Closeable {
             Settings.MAX_SEARCH_RESULT,
         )
 
-        val foundDocs = mutableListOf<Document>()
         for (sc in topDocs.scoreDocs)
             @Suppress("DEPRECATION")
-            foundDocs.add(searcher.doc(sc.doc))
-
-        return foundDocs
+            _foundDocs.add(searcher.doc(sc.doc))
     }
+
+    fun foundDocs(): List<Document> = _foundDocs
 
     override fun close() {
         // Make sure to close the reader

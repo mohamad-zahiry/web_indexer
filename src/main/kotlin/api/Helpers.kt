@@ -40,6 +40,7 @@ object Helpers {
 
     fun search(term: String = ""): List<Document> {
         val searcher: Searcher = Searcher()
-        return searcher.search(term)
+        searcher.search(term)
+        return searcher.foundDocs()
     }
 }
